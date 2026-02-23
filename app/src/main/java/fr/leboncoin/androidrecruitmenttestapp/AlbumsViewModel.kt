@@ -1,29 +1,28 @@
 package fr.leboncoin.androidrecruitmenttestapp
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.leboncoin.androidrecruitmenttestapp.ui.common.Ui
 import fr.leboncoin.androidrecruitmenttestapp.ui.mapper.AlbumUiMapper
 import fr.leboncoin.androidrecruitmenttestapp.ui.model.AlbumUi
-import fr.leboncoin.core.coroutine.DefaultDispatcherProvider
 import fr.leboncoin.core.coroutine.DispatcherProvider
 import fr.leboncoin.domain.common.Resource
 import fr.leboncoin.domain.model.Album
 import fr.leboncoin.domain.repository.AlbumRepositoryContract
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@OptIn(DelicateCoroutinesApi::class)
-class AlbumsViewModel(
+@HiltViewModel
+class AlbumsViewModel @Inject constructor(
     private val albumUiMapper: AlbumUiMapper,
     private val repository: AlbumRepositoryContract,
     private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
-    private val _ui : MutableStateFlow<Ui<List<AlbumUi>>> = MutableStateFlow(Ui.Loading)
+    private val _ui: MutableStateFlow<Ui<List<AlbumUi>>> = MutableStateFlow(Ui.Loading)
     val ui: StateFlow<Ui<List<AlbumUi>>> = _ui
 
     fun loadAlbums() {
@@ -44,19 +43,6 @@ class AlbumsViewModel(
                     )
                 }
             }
-        }
-    }
-
-    class Factory(
-        private val repository: AlbumRepositoryContract,
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return AlbumsViewModel(
-                AlbumUiMapper(),
-                repository,
-                DefaultDispatcherProvider,
-            ) as T
         }
     }
 }

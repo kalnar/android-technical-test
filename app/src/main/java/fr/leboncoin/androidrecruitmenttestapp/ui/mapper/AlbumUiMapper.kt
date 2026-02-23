@@ -2,8 +2,9 @@ package fr.leboncoin.androidrecruitmenttestapp.ui.mapper
 
 import fr.leboncoin.androidrecruitmenttestapp.ui.model.AlbumUi
 import fr.leboncoin.domain.model.Album
+import javax.inject.Inject
 
-class AlbumUiMapper {
+class AlbumUiMapper @Inject constructor() {
 
     fun toUi(album: Album): AlbumUi = AlbumUi(
         id = album.id,
