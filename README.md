@@ -1,4 +1,18 @@
 # AndroidRecruitmentTestApp
+
+# À propos
+
+Voici les étapes que j'ai effectuées :
+
+1. Ajout de couche de domain
+  - J'ai ajouté le module domain et les classes Resource et Ui pour representer les états de chargement et erreur.
+  - La couche domain sert à representer la logique métiers sans libraries externes, permet à adhérer à la Clean Architecture.
+2. Ajout de l'injection de dépendance Hilt. 
+  - J'ai remplacé la DI manual par Hilt. 
+  - Hilt est recommandé et maintenau par Google.
+  - On n'a pas besoin de support KMP pour cette application.
+
+
 ## ÉNONCÉ
 
 Vous devez améliorer une application native Android affichant la liste des items suivant (titres d'albums) : https://static.leboncoin.fr/img/shared/technical-test.json
