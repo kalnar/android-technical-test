@@ -1,6 +1,5 @@
 package fr.leboncoin.androidrecruitmenttestapp.ui
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,13 +26,13 @@ import com.adevinta.spark.ExperimentalSparkApi
 import com.adevinta.spark.SparkTheme
 import com.adevinta.spark.components.card.Card
 import com.adevinta.spark.components.chips.ChipTinted
-import fr.leboncoin.data.network.model.AlbumDto
+import fr.leboncoin.androidrecruitmenttestapp.ui.model.AlbumUi
 
 @OptIn(ExperimentalSparkApi::class)
 @Composable
 fun AlbumItem(
-    album: AlbumDto,
-    onItemSelected : (AlbumDto) -> Unit,
+    album: AlbumUi,
+    onItemSelected: (AlbumUi) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -41,7 +40,9 @@ fun AlbumItem(
             .fillMaxWidth()
             .height(120.dp)
             .padding(horizontal = 16.dp),
-        onClick = { onItemSelected(album) },
+        onClick = {
+            onItemSelected(album)
+        },
     ) {
         Row {
             AsyncImage(
@@ -80,10 +81,10 @@ fun AlbumItem(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     ChipTinted(
-                        text = "Album #${album.albumId}"
+                        text = album.chip1Description
                     )
                     ChipTinted(
-                        text = "Track #${album.id}"
+                        text = album.chip2Description
                     )
                 }
             }
