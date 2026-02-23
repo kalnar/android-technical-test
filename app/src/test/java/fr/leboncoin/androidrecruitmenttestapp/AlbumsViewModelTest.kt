@@ -19,7 +19,7 @@ class AlbumsViewModelTest {
         val repository = AlbumRepository(fakeService)
         val vm = AlbumsViewModel(Logger.getGlobal(), repository)
 
-        assertTrue("Expected albums to be loaded", vm.albums.value.isNotEmpty())
+        assertTrue("Expected albums to be loaded", vm.ui.value.isNotEmpty())
     }
 }
 

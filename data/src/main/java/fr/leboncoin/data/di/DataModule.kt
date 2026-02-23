@@ -4,6 +4,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import fr.leboncoin.data.BuildConfig
 import fr.leboncoin.data.network.api.AlbumApiService
 import fr.leboncoin.data.repository.AlbumRepository
+import fr.leboncoin.data.repository.mapper.AlbumDtoMapper
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -13,7 +14,7 @@ import retrofit2.create
 
 class DataDependencies {
 
-    val albumsRepository: AlbumRepository by lazy { AlbumRepository(apiService) }
+    val albumsRepository: AlbumRepository by lazy { AlbumRepository(apiService, AlbumDtoMapper()) }
 
     private val apiService: AlbumApiService by lazy { retrofit.create<AlbumApiService>() }
 
