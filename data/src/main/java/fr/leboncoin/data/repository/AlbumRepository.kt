@@ -7,8 +7,9 @@ import fr.leboncoin.domain.model.Album
 import fr.leboncoin.domain.repository.AlbumRepositoryContract
 import okio.IOException
 import retrofit2.HttpException
+import javax.inject.Inject
 
-class AlbumRepository(
+class AlbumRepository @Inject constructor(
     private val albumApiService: AlbumApiService,
     private val albumDtoMapper: AlbumDtoMapper,
 ) : AlbumRepositoryContract {

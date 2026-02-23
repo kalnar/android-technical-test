@@ -2,8 +2,9 @@ package fr.leboncoin.data.repository.mapper
 
 import fr.leboncoin.data.network.model.AlbumDto
 import fr.leboncoin.domain.model.Album
+import javax.inject.Inject
 
-class AlbumDtoMapper {
+class AlbumDtoMapper @Inject constructor() {
 
     fun toDomain(dto: AlbumDto): Album = Album(
         id = dto.id,
