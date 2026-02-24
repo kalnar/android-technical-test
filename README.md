@@ -11,6 +11,11 @@ Voici les étapes que j'ai effectuées :
   - J'ai remplacé la DI manual par Hilt. 
   - Hilt est recommandé et maintenau par Google.
   - On n'a pas besoin de support KMP pour cette application.
+3. Dans le viewmodel j'ai remplacé GlobalScope par viewmodelScope
+  - Cela cancel la coroutine quand on quitte l'écran et comme ça il n'y a pas de leak. 
+4. Ajout de persistance et cache coil pour un mode offline. 
+   - Utilisation de Room pour l'ORM de base de données car pas de besoin de support de 
+     KMP et c'est maintenu par Google
 
 
 ## ÉNONCÉ
