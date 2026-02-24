@@ -53,7 +53,7 @@ fun AlbumsScreen(
         },
         modifier = modifier,
     ) {
-        when (ui) {
+        when (val state = ui) {
             is Ui.Error -> {
                 // handled by snackbar
             }
@@ -74,7 +74,7 @@ fun AlbumsScreen(
                     contentPadding = it,
                 ) {
                     items(
-                        items = (ui as Ui.Success<List<AlbumUi>>).data,
+                        items = state.data,
                         key = { album -> album.id }
                     ) { album ->
                         AlbumItem(
