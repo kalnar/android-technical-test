@@ -16,6 +16,8 @@ Voici les étapes que j'ai effectuées :
 4. Ajout de persistance et cache coil pour un mode offline. 
    - Utilisation de Room pour l'ORM de base de données car pas de besoin de support de 
      KMP et c'est maintenu par Google
+5. Ajout de l'écran de détail en Compose.
+   - J'ai supprimé l'Activity de détail et j'ai utilisé la navigation de Compose pour afficher l'écran de détail.
 
 
 ## ÉNONCÉ

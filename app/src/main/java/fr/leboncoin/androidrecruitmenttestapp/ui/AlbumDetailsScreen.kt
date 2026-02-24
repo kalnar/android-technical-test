@@ -3,6 +3,7 @@ package fr.leboncoin.androidrecruitmenttestapp.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,7 +53,8 @@ fun AlbumDetailsScreen(
                 .build(),
             contentDescription = album.title,
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .aspectRatio(1f / 1f), // reserves space before image loads
             contentScale = ContentScale.Crop
         )
 
