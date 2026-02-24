@@ -25,7 +25,7 @@ class PhotoApp : Application() {
                 .diskCache {
                     DiskCache.Builder()
                         .directory(cacheDir.resolve("image_cache"))
-                        .maxSizeBytes(50L * 1024 * 1024) // 50 MB
+                        .maxSizeBytes(500L * 1024 * 1024) // 500 MB
                         .build()
                 }
                 .components {
