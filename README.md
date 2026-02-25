@@ -11,7 +11,7 @@ Voici les étapes que j'ai effectuées :
   - J'ai remplacé la DI manual par Hilt. 
   - Hilt est recommandé et maintenau par Google.
   - On n'a pas besoin de support KMP pour cette application.
-3. Dans le viewmodel j'ai remplacé GlobalScope par viewmodelScope
+3. Dans le ViewModel j'ai remplacé GlobalScope par viewmodelScope
   - Cela cancel la coroutine quand on quitte l'écran et comme ça il n'y a pas de leak. 
 4. Ajout de persistance et cache coil pour un mode offline. 
    - Utilisation de Room pour l'ORM de base de données car pas de besoin de support de 
@@ -21,6 +21,8 @@ Voici les étapes que j'ai effectuées :
 6. Ajout de l'état de favoris qui est stocké en local dans la BDD.
 7. Ajout de tests unitaire pour le ViewModel et le Repository
    - usage de Mockito pour mocker les dépendances, pas besoin de créer des implémentations des interfaces uniquement pour les tests.
+   - J'ai ajouté un module pour les resources de Tests, il contient un TestDispatcherProvider qui peut être utilisé par tous les modules.
+8. Je n'ai pas ajouté de UseCase vu la taille du projet, utiliser le Repository directement dans le ViewModel est acceptable pour les petits projets.
 
 ## ÉNONCÉ
 
