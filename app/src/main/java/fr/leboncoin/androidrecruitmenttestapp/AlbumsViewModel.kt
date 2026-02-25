@@ -1,19 +1,12 @@
 package fr.leboncoin.androidrecruitmenttestapp
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import coil3.imageLoader
-import coil3.memory.MemoryCache
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
-import coil3.size.Size
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.leboncoin.androidrecruitmenttestapp.ui.common.Ui
 import fr.leboncoin.androidrecruitmenttestapp.ui.mapper.AlbumUiMapper
 import fr.leboncoin.androidrecruitmenttestapp.ui.model.AlbumUi
-import fr.leboncoin.androidrecruitmenttestapp.utils.ImagePrefetchHandler
+import fr.leboncoin.androidrecruitmenttestapp.utils.ImagePrefetcher
 import fr.leboncoin.core.coroutine.DispatcherProvider
 import fr.leboncoin.domain.common.Resource
 import fr.leboncoin.domain.model.Album
@@ -28,8 +21,7 @@ class AlbumsViewModel @Inject constructor(
     private val albumUiMapper: AlbumUiMapper,
     private val repository: AlbumRepository,
     private val dispatcherProvider: DispatcherProvider,
-    private val imagePrefetchHandler: ImagePrefetchHandler,
-    @ApplicationContext private val context: Context,
+    private val imagePrefetcher: ImagePrefetcher,
 ) : ViewModel() {
 
     private val _ui: MutableStateFlow<Ui<List<AlbumUi>>> = MutableStateFlow(Ui.Loading)
@@ -65,14 +57,12 @@ class AlbumsViewModel @Inject constructor(
                         .map { it.thumbnailUrl }
                         .plus(albumUiList.map { it.url })
 
-                    imagePrefetchHandler.prefetchImages(
+                    imagePrefetcher.prefetchImages(
                         viewModelScope,
                         urlList,
                     )
 
-                    _ui.emit(
-                        Ui.Success(albumUiList)
-                    )
+                    _ui.emit(Ui.Success(albumUiList))
                 }
             }
         }

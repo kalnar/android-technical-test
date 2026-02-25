@@ -15,13 +15,13 @@ import javax.inject.Inject
 class ImagePrefetchHandler @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dispatcherProvider: DispatcherProvider,
-) {
+) : ImagePrefetcher {
 
-    fun prefetchImages(
-        viewModelScope: CoroutineScope,
+    override fun prefetchImages(
+        scope: CoroutineScope,
         urlList: List<String>,
     ) {
-        viewModelScope.launch(dispatcherProvider.io) {
+        scope.launch(dispatcherProvider.io) {
             urlList
                 .forEach { url ->
                     if (!isImageCached(url, context)) {

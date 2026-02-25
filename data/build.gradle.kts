@@ -51,6 +51,9 @@ android {
         ksp(libs.room.compiler)
 
         testImplementation(libs.junit)
+        testImplementation(libs.kotlinx.coroutines.test)
+        testImplementation(libs.mockito.kotlin)
+        testImplementation(project(":test"))
         androidTestImplementation(libs.androidx.junit) // Useless dependency
         androidTestImplementation(libs.androidx.espresso.core) // Useless dependency
     }
