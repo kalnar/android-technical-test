@@ -1,47 +1,69 @@
 package fr.leboncoin.data.di
 
+import android.content.Context
+import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import fr.leboncoin.data.BuildConfig
+import fr.leboncoin.data.local.dao.AlbumDao
+import fr.leboncoin.data.local.db.AppDatabase
 import fr.leboncoin.data.network.api.AlbumApiService
-import fr.leboncoin.data.repository.AlbumRepository
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.create
+import javax.inject.Singleton
 
-class DataDependencies {
+@Module
+@InstallIn(SingletonComponent::class)
+object DataModule {
 
-    val albumsRepository: AlbumRepository by lazy { AlbumRepository(apiService) }
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient {
+        val builder = OkHttpClient.Builder()
+        if (BuildConfig.DEBUG) {
+            val loggingInterceptor = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+            builder.addInterceptor(loggingInterceptor)
+        }
+        return builder.build()
+    }
 
-    private val apiService: AlbumApiService by lazy { retrofit.create<AlbumApiService>() }
-
-    private val retrofit: Retrofit by lazy {
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         val contentType = "application/json".toMediaType()
-
-        Retrofit.Builder()
+        val json = Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
+        return Retrofit.Builder()
             .baseUrl(AlbumApiService.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
     }
 
-    private val okHttpClient: OkHttpClient by lazy {
-        val builder = OkHttpClient.Builder()
-        if (!BuildConfig.DEBUG) {
-            val loggingInterceptor = HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            }
-            builder.addInterceptor(loggingInterceptor)
-        }
-        builder.build()
-    }
+    @Provides
+    @Singleton
+    fun provideAlbumApiService(retrofit: Retrofit): AlbumApiService = retrofit.create()
 
-    private val json: Json by lazy {
-        Json {
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-        }
-    }
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(context, AppDatabase::class.java, "album_database")
+            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideAlbumDao(database: AppDatabase): AlbumDao = database.albumDao()
 }

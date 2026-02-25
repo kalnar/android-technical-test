@@ -1,4 +1,29 @@
 # AndroidRecruitmentTestApp
+
+# À propos
+
+Voici les étapes que j'ai effectuées :
+
+1. Ajout de couche de domain
+  - J'ai ajouté le module domain et les classes Resource et Ui pour representer les états de chargement et erreur.
+  - La couche domain sert à representer la logique métiers sans libraries externes, permet à adhérer à la Clean Architecture.
+2. Ajout de l'injection de dépendance Hilt. 
+  - J'ai remplacé la DI manual par Hilt. 
+  - Hilt est recommandé et maintenau par Google.
+  - On n'a pas besoin de support KMP pour cette application.
+3. Dans le ViewModel j'ai remplacé GlobalScope par viewmodelScope
+  - Cela cancel la coroutine quand on quitte l'écran et comme ça il n'y a pas de leak. 
+4. Ajout de persistance et cache coil pour un mode offline. 
+   - Utilisation de Room pour l'ORM de base de données car pas de besoin de support de 
+     KMP et c'est maintenu par Google
+5. Ajout de l'écran de détail en Compose.
+   - J'ai supprimé l'Activity de détail et j'ai utilisé la navigation de Compose pour afficher l'écran de détail.
+6. Ajout de l'état de favoris qui est stocké en local dans la BDD.
+7. Ajout de tests unitaire pour le ViewModel et le Repository
+   - usage de Mockito pour mocker les dépendances, pas besoin de créer des implémentations des interfaces uniquement pour les tests.
+   - J'ai ajouté un module pour les resources de Tests, il contient un TestDispatcherProvider qui peut être utilisé par tous les modules.
+8. Je n'ai pas ajouté de UseCase vu la taille du projet, utiliser le Repository directement dans le ViewModel est acceptable pour les petits projets.
+
 ## ÉNONCÉ
 
 Vous devez améliorer une application native Android affichant la liste des items suivant (titres d'albums) : https://static.leboncoin.fr/img/shared/technical-test.json

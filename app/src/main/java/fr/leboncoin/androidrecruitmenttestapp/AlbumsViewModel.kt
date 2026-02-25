@@ -1,37 +1,70 @@
 package fr.leboncoin.androidrecruitmenttestapp
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import fr.leboncoin.data.network.model.AlbumDto
-import fr.leboncoin.data.repository.AlbumRepository
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.leboncoin.androidrecruitmenttestapp.ui.common.Ui
+import fr.leboncoin.androidrecruitmenttestapp.ui.mapper.AlbumUiMapper
+import fr.leboncoin.androidrecruitmenttestapp.ui.model.AlbumUi
+import fr.leboncoin.androidrecruitmenttestapp.utils.ImagePrefetcher
+import fr.leboncoin.core.coroutine.DispatcherProvider
+import fr.leboncoin.domain.common.Resource
+import fr.leboncoin.domain.model.Album
+import fr.leboncoin.domain.repository.AlbumRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@OptIn(DelicateCoroutinesApi::class)
-class AlbumsViewModel(
+@HiltViewModel
+class AlbumsViewModel @Inject constructor(
+    private val albumUiMapper: AlbumUiMapper,
     private val repository: AlbumRepository,
+    private val dispatcherProvider: DispatcherProvider,
+    private val imagePrefetcher: ImagePrefetcher,
 ) : ViewModel() {
 
-    private val _albums = MutableSharedFlow<List<AlbumDto>>()
-    val albums: SharedFlow<List<AlbumDto>> = _albums
+    private val _ui: MutableStateFlow<Ui<List<AlbumUi>>> = MutableStateFlow(Ui.Loading)
+    val ui: StateFlow<Ui<List<AlbumUi>>> = _ui
 
-    fun loadAlbums() {
-        GlobalScope.launch {
-            try {
-                _albums.emit(repository.getAllAlbums())
-            } catch (_: Exception) { /* TODO: Handle errors */ }
+    fun toggleFavorite(albumId: Int) {
+        viewModelScope.launch(dispatcherProvider.io) {
+            val currentUi = _ui.value as? Ui.Success ?: return@launch
+            val album = currentUi.data.find { it.id == albumId } ?: return@launch
+            val newFavoriteState = !album.isFavorite
+            repository.toggleFavorite(albumId, newFavoriteState)
+            _ui.value = Ui.Success(
+                currentUi.data.map { if (it.id == albumId) it.copy(isFavorite = newFavoriteState) else it }
+            )
         }
     }
 
-    class Factory(
-        private val repository: AlbumRepository,
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return AlbumsViewModel(repository) as T
+    fun loadAlbums() {
+        _ui.value = Ui.Loading
+        viewModelScope.launch(dispatcherProvider.io) {
+            when (val resource = repository.getAllAlbums()) {
+                is Resource.Error -> {
+                    _ui.value = Ui.Error(resource.message.orEmpty())
+                }
+
+                is Resource.Success<List<Album>> -> {
+                    val albumList = resource.data
+                    val albumUiList = albumList.map { album ->
+                        albumUiMapper.toUi(album)
+                    }
+
+                    val urlList = albumUiList
+                        .map { it.thumbnailUrl }
+                        .plus(albumUiList.map { it.url })
+
+                    imagePrefetcher.prefetchImages(
+                        viewModelScope,
+                        urlList,
+                    )
+
+                    _ui.emit(Ui.Success(albumUiList))
+                }
+            }
         }
     }
 }

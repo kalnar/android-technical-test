@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -29,22 +29,31 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
 
     buildFeatures {
         buildConfig = true
     }
 
     dependencies {
+        implementation(project(":domain"))
+
         implementation(libs.retrofit.core)
         implementation(libs.retrofit.kotlin.serialization)
         implementation(libs.okhttp.logging)
 
         implementation(libs.kotlin.serialization.json)
 
+        implementation(libs.hilt.android)
+        ksp(libs.hilt.compiler)
+
+        implementation(libs.room.runtime)
+        implementation(libs.room.ktx)
+        ksp(libs.room.compiler)
+
         testImplementation(libs.junit)
+        testImplementation(libs.kotlinx.coroutines.test)
+        testImplementation(libs.mockito.kotlin)
+        testImplementation(project(":test"))
         androidTestImplementation(libs.androidx.junit) // Useless dependency
         androidTestImplementation(libs.androidx.espresso.core) // Useless dependency
     }
