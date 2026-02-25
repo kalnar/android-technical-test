@@ -3,22 +3,21 @@ package fr.leboncoin.androidrecruitmenttestapp
 import fr.leboncoin.androidrecruitmenttestapp.ui.common.Ui
 import fr.leboncoin.androidrecruitmenttestapp.ui.mapper.AlbumUiMapper
 import fr.leboncoin.androidrecruitmenttestapp.utils.ImagePrefetcher
-import fr.leboncoin.core.coroutine.DispatcherProvider
 import fr.leboncoin.core.coroutine.TestDispatcherProvider
 import fr.leboncoin.domain.common.Resource
 import fr.leboncoin.domain.model.Album
 import fr.leboncoin.domain.repository.AlbumRepository
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -26,19 +25,31 @@ import org.mockito.kotlin.whenever
 @OptIn(ExperimentalCoroutinesApi::class)
 class AlbumsViewModelTest {
 
-    private val repository: AlbumRepository = mock()
-    private val imagePrefetcher: ImagePrefetcher = mock()
+    @Mock
+    lateinit var repository: AlbumRepository
+
+    @Mock
+    lateinit var imagePrefetcher: ImagePrefetcher
 
     private lateinit var viewModel: AlbumsViewModel
 
+    private var mocks: AutoCloseable? = null
+
     @Before
     fun setUp() {
+        mocks = MockitoAnnotations.openMocks(this)
         viewModel = AlbumsViewModel(
             AlbumUiMapper(),
             repository,
             TestDispatcherProvider,
             imagePrefetcher,
         )
+    }
+
+    @After
+    @Throws(Exception::class)
+    fun teardown() {
+        mocks!!.close() // cleans up inline mock maker resources
     }
 
     private fun makeAlbum(id: Int, isFavorite: Boolean = false) = Album(

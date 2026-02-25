@@ -62,9 +62,7 @@ class AlbumsViewModel @Inject constructor(
                         urlList,
                     )
 
-                    _ui.emit(
-                        Ui.Success(albumUiList)
-                    )
+                    _ui.emit(Ui.Success(albumUiList))
                 }
             }
         }

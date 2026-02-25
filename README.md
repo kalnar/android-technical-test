@@ -19,6 +19,8 @@ Voici les étapes que j'ai effectuées :
 5. Ajout de l'écran de détail en Compose.
    - J'ai supprimé l'Activity de détail et j'ai utilisé la navigation de Compose pour afficher l'écran de détail.
 6. Ajout de l'état de favoris qui est stocké en local dans la BDD.
+7. Ajout de tests unitaire pour le ViewModel et le Repository
+   - usage de Mockito pour mocker les dépendances, pas besoin de créer des implémentations des interfaces uniquement pour les tests.
 
 ## ÉNONCÉ
 
