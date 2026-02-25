@@ -9,5 +9,6 @@ data class AlbumUi(
     val chip2Description: String,
     val title: String,
     val url: String,
-    val thumbnailUrl: String
+    val thumbnailUrl: String,
+    val isFavorite: Boolean = false,
 )

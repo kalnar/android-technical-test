@@ -51,7 +51,10 @@ class MainActivity : ComponentActivity() {
                     composable<AlbumUi> { backStackEntry ->
                         val album: AlbumUi = backStackEntry.toRoute()
                         analyticsHelper.trackScreenView("Details")
-                        AlbumDetailsScreen(album = album)
+                        AlbumDetailsScreen(
+                            album = album,
+                            onToggleFavorite = { viewModel.toggleFavorite(album.id) },
+                        )
                     }
                 }
             }

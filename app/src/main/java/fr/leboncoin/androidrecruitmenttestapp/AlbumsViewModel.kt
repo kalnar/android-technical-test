@@ -35,6 +35,18 @@ class AlbumsViewModel @Inject constructor(
     private val _ui: MutableStateFlow<Ui<List<AlbumUi>>> = MutableStateFlow(Ui.Loading)
     val ui: StateFlow<Ui<List<AlbumUi>>> = _ui
 
+    fun toggleFavorite(albumId: Int) {
+        viewModelScope.launch(dispatcherProvider.io) {
+            val currentUi = _ui.value as? Ui.Success ?: return@launch
+            val album = currentUi.data.find { it.id == albumId } ?: return@launch
+            val newFavoriteState = !album.isFavorite
+            repository.toggleFavorite(albumId, newFavoriteState)
+            _ui.value = Ui.Success(
+                currentUi.data.map { if (it.id == albumId) it.copy(isFavorite = newFavoriteState) else it }
+            )
+        }
+    }
+
     fun loadAlbums() {
         _ui.value = Ui.Loading
         viewModelScope.launch(dispatcherProvider.io) {

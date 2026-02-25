@@ -80,6 +80,7 @@ fun AlbumsScreen(
                         AlbumItem(
                             album = album,
                             onItemSelected = onItemSelected,
+                            onToggleFavorite = { viewModel.toggleFavorite(album.id) },
                         )
                     }
                 }

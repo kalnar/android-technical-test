@@ -5,4 +5,5 @@ import fr.leboncoin.domain.model.Album
 
 interface AlbumRepository {
     suspend fun getAllAlbums(): Resource<List<Album>>
+    suspend fun toggleFavorite(id: Int, isFavorite: Boolean)
 }
