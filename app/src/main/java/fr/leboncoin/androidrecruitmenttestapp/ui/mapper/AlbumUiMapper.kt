@@ -12,6 +12,7 @@ class AlbumUiMapper @Inject constructor() {
         chip2Description = "Track #${album.id}",
         title = album.title,
         url = album.url,
-        thumbnailUrl = album.thumbnailUrl
+        thumbnailUrl = album.thumbnailUrl,
+        isFavorite = album.isFavorite,
     )
 }

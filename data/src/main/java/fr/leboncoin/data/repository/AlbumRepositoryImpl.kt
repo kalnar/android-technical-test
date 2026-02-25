@@ -3,7 +3,6 @@ package fr.leboncoin.data.repository
 import fr.leboncoin.data.local.dao.AlbumDao
 import fr.leboncoin.data.local.mapper.AlbumEntityMapper
 import fr.leboncoin.data.network.api.AlbumApiService
-import fr.leboncoin.data.repository.mapper.AlbumDtoMapper
 import fr.leboncoin.domain.common.Resource
 import fr.leboncoin.domain.model.Album
 import fr.leboncoin.domain.repository.AlbumRepository
@@ -15,7 +14,6 @@ import javax.inject.Inject
 
 class AlbumRepositoryIml @Inject constructor(
     private val albumApiService: AlbumApiService,
-    private val albumDtoMapper: AlbumDtoMapper,
     private val albumDao: AlbumDao,
     private val albumEntityMapper: AlbumEntityMapper,
 ) : AlbumRepository {
@@ -28,20 +26,19 @@ class AlbumRepositoryIml @Inject constructor(
         if (isCacheValid) {
             val cached = albumDao.getAll()
             if (cached.isNotEmpty()) {
-                return Resource.Success(
-                    cached.map { entity ->
-                        albumDtoMapper.toDomain(albumEntityMapper.toDto(entity))
-                    }
-                )
+                return Resource.Success(cached.map { albumEntityMapper.toDomain(it) })
             }
         }
 
         return try {
             val albumDtoList = albumApiService.getAlbums()
             val now = System.currentTimeMillis()
+            val favorites = albumDao.getAll().filter { it.isFavorite }.map { it.id }.toSet()
             albumDao.deleteAll()
-            albumDao.insertAll(albumDtoList.map { dto -> albumEntityMapper.toEntity(dto, now) })
-            Resource.Success(albumDtoList.map { dto -> albumDtoMapper.toDomain(dto) })
+            albumDao.insertAll(albumDtoList.map { dto ->
+                albumEntityMapper.toEntity(dto, now, isFavorite = favorites.contains(dto.id))
+            })
+            Resource.Success(albumDao.getAll().map { albumEntityMapper.toDomain(it) })
         } catch (e: HttpException) {
             Resource.Error(e, "Server error: ${e.code()}")
         } catch (e: IOException) {
@@ -49,6 +46,10 @@ class AlbumRepositoryIml @Inject constructor(
         } catch (e: Exception) {
             Resource.Error(e, "An unexpected error occurred")
         }
+    }
+
+    override suspend fun toggleFavorite(id: Int, isFavorite: Boolean) {
+        albumDao.updateFavorite(id, isFavorite)
     }
 
     companion object {

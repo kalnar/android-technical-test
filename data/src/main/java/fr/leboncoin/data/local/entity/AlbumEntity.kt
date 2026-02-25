@@ -11,4 +11,5 @@ data class AlbumEntity(
     val url: String,
     val thumbnailUrl: String,
     val fetchedAt: Long,
+    val isFavorite: Boolean = false,
 )

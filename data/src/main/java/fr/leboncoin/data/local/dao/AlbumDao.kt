@@ -20,4 +20,7 @@ interface AlbumDao {
 
     @Query("SELECT fetchedAt FROM albums LIMIT 1")
     suspend fun getLastFetchedAt(): Long?
+
+    @Query("UPDATE albums SET isFavorite = :isFavorite WHERE id = :id")
+    suspend fun updateFavorite(id: Int, isFavorite: Boolean)
 }

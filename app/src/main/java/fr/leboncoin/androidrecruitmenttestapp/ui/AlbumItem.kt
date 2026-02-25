@@ -9,10 +9,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,6 +41,7 @@ import fr.leboncoin.androidrecruitmenttestapp.ui.model.AlbumUi
 fun AlbumItem(
     album: AlbumUi,
     onItemSelected: (AlbumUi) -> Unit,
+    onToggleFavorite: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -70,12 +78,29 @@ fun AlbumItem(
                     .fillMaxWidth()
                     .padding(14.dp),
             ) {
-                Text(
-                    text = album.title,
-                    style = SparkTheme.typography.caption,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top,
+                ) {
+                    Text(
+                        text = album.title,
+                        modifier = Modifier.weight(1f),
+                        style = SparkTheme.typography.caption,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    IconButton(
+                        onClick = onToggleFavorite,
+                        modifier = Modifier.size(24.dp),
+                    ) {
+                        Icon(
+                            imageVector = if (album.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = if (album.isFavorite) "Remove from favorites" else "Add to favorites",
+                            tint = if (album.isFavorite) Color.Red else Color.Gray,
+                        )
+                    }
+                }
 
                 Spacer(Modifier.weight(1f))
 
